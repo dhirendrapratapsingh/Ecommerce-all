@@ -1,0 +1,56 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <% if (errorMessage) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } %>
+        <form class="login-form" action="/signup" method="POST" novalidate>
+            <!-- novalidate attribute is used to disable the browser's default validation and use our custom validation instead -->
+            <div class="form-control">
+                <label for="email">E-Mail</label>
+                <!--  Recived data from controller to view to pre-fill the form fields with the data entered by the user
+                   before the validation error occurred, so that the user does not have to re-enter all the data again 
+                   and can just correct the invalid fields. oldInput is a mandaory field to pass to the vie otherwise 
+                   it will throw an error in the view as it will be undefined hence initiallise getSignup with "" in the get routes -->
+                <input 
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    value="<%= oldInput.email %>"
+                    class="<%= validationErrors.find(e => e.path === 'email') ? 'invalid' : '' %>"
+                >
+                <!-- e.path or e.param can be used to get the path of the field in the validation errors array 
+                 validationErrors holds an entry if validation for that field failed e.g email control-->
+            </div>
+            <div class="form-control">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="password" 
+                    value="<%= oldInput.password %>"
+                    class="<%= validationErrors.find(e => e.path === 'password') ? 'invalid' : '' %>"
+                >
+                <!--  Added .invalid styling (red border + light red background) to visually highlight invalid fields. -->
+            </div>
+            <div class="form-control">
+                <label for="confirmPassword">Confirm Password</label>
+                <input 
+                    type="password" 
+                    name="confirmPassword" 
+                    id="confirmPassword" 
+                    value="<%= oldInput.confirmPassword %>"
+                    class="<%= validationErrors.find(e => e.path === 'confirmPassword') ? 'invalid' : '' %>"
+                >
+            </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit">Signup</button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs') %>

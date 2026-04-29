@@ -1,0 +1,41 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/cart.css">
+    
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <ul class="cart__item-list">
+                <% products.forEach(p => { %>
+                    <li class="cart__item">
+                        <h1><%= p.productId.title %></h1>
+                        <h2>Quantity: <%= p.quantity %></h2>
+                    </li>
+                <% }) %>
+            </ul>
+            <div class="centered">
+                <h2>Total: <%= totalSum %></h2>
+            </div>
+            <div class="centered">
+                <button id="order-btn" class="btn">ORDER</button>
+                <script src="https://js.stripe.com/v3/"></script>
+                <!-- document for integrating Stripe & usage is here https://docs.stripe.com/js pk_test_51TKBHZ4KfiHGb76K859mV07WHfxE1T0ZIRcNTnXjER7uXhVFSB67GgGAkQc4IP5LQ0WP09uSiEdpziWmvdI3q52X001bgHpX3H-->
+                <script>
+                    // var stripe = Stripe('pk_test_Oa1aEfV1EFTGOLJHIkx6mFUs00AtOsluFy');
+                     var stripe = Stripe('pk_test_51TKBHZ4KfiHGb76K859mV07WHfxE1T0ZIRcNTnXjER7uXhVFSB67GgGAkQc4IP5LQ0WP09uSiEdpziWmvdI3q52X001bgHpX3H');
+                    var orderBtn = document.getElementById('order-btn');
+                    orderBtn.addEventListener('click', function() {
+                        stripe.redirectToCheckout({
+                            sessionId: '<%= sessionId %>'
+                            // controller/shop.jsexports.getCheckout creates a Stripe session using Stripe API having all order details like products, quantity, total amount, etc. 
+                            // and sends the session ID back to the client in the response. The session ID is used to identify the Stripe session for the current order
+                            // which is then used to redirect user ro success_url or cancel_url after payment completion or cancellation respectively & create an order in the database with the session details.
+                        });
+                        // stripe.redirectToCheckout() redirect the user to the Stripe checkout page 
+                        // where they can enter details & complete the payment process.
+                    });
+                </script>
+            </div>
+        </main>
+        <%- include('../includes/end.ejs') %>

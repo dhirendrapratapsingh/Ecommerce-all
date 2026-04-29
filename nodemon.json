@@ -1,0 +1,9 @@
+{
+    "env": {
+        "MONGO_USER": "",
+        "MONGO_PASSWORD": "",
+        "MONGO_DEFAULT_DATABASE": "",
+        "STRIPE_KEY": "",
+        "SENDGRID_API_KEY": ""
+    }
+}
