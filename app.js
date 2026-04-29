@@ -36,8 +36,12 @@ const morgan = require("morgan");
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
-const privateKey = fs.readFileSync("server.key"); // read the private key and certificate files for HTTPS server setup
-const certificate = fs.readFileSync("server.cert"); // created using OpenSSL for local development, in production you would use a certificate from a trusted CA.
+const privateKey = fs.existsSync("server.key")
+  ? fs.readFileSync("server.key")
+  : null;
+const certificate = fs.existsSync("server.cert")
+  ? fs.readFileSync("server.cert")
+  : null;
 
 // const MONGODB_URI =
 //   "mongodb+srv://dhirendrapratapsingh398_db_user:9955075725d@cluster0.bspry5p.mongodb.net/shop?retryWrites=true&w=majority";
@@ -213,9 +217,20 @@ mongoose
   .then((result) => {
     console.log("MongoDB Connected!");
 
-    https
-      .createServer({ key: privateKey, cert: certificate }, app)
-      .listen(process.env.PORT || 3000);
+    const PORT = process.env.PORT || 3000;
+    if (privateKey && certificate) {
+      // Local development: use HTTPS with self-signed cert
+      https
+        .createServer({ key: privateKey, cert: certificate }, app)
+        .listen(PORT, () =>
+          console.log(`HTTPS server running on port ${PORT}`),
+        );
+    } else {
+      // Production (Render): plain HTTP, Render terminates SSL
+      app.listen(PORT, () =>
+        console.log(`HTTP server running on port ${PORT}`),
+      );
+    }
 
     // Start server only after MongoDB connection attempt has been made
     // (if connection fails, errors will be logged above).
