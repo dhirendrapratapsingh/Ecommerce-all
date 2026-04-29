@@ -1,3 +1,5 @@
+require("dotenv").config(); // required to read .env files
+
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
